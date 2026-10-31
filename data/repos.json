@@ -1,0 +1,29 @@
+[
+  {
+    "slug": "nanoGPT",
+    "name": "nanoGPT",
+    "url": "https://github.com/karpathy/nanoGPT",
+    "description": "The simplest, fastest repository for training/finetuning medium-sized GPTs",
+    "nodes": 94,
+    "links": 115,
+    "commit": "3adf61e154c3fe3fca428ad6bc3818b27a3b8291"
+  },
+  {
+    "slug": "minbpe",
+    "name": "minbpe",
+    "url": "https://github.com/karpathy/minbpe",
+    "description": "Minimal, clean code for the Byte Pair Encoding (BPE) algorithm used in LLM tokenization",
+    "nodes": 94,
+    "links": 167,
+    "commit": "1acefe89412b20245db5a22d2a02001e547dc602"
+  },
+  {
+    "slug": "smolagents",
+    "name": "smolagents",
+    "url": "https://github.com/huggingface/smolagents",
+    "description": "Hugging Face's barebones library for agents that think in code",
+    "nodes": 3273,
+    "links": 6496,
+    "commit": "96f33faaf028479119ec8d34507b47694cf14e34"
+  }
+]

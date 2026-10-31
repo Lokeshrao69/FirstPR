@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FirstPR — your guide to a first open-source AI contribution</title>
+  <meta name="description" content="Gemma 4 agent that reasons over Graphify codebase knowledge graphs to help newcomers make their first PR." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='30' cy='30' r='14' fill='%23ff8a3d'/><circle cx='72' cy='40' r='10' fill='%237cc4ff'/><circle cx='45' cy='75' r='12' fill='%23b7f171'/><path d='M30 30L72 40L45 75Z' stroke='%23fff' stroke-width='4' fill='none'/></svg>" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="logo">◆</span>
+      <div>
+        <h1>FirstPR</h1>
+        <p>Map an open-source AI repo. Ask it anything. Ship your first PR.</p>
+      </div>
+    </div>
+    <div class="controls">
+      <label class="repo-pick">
+        <span>Repository</span>
+        <select id="repo"></select>
+      </label>
+      <a id="repoLink" class="ghost" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+    <div class="badges">
+      <span class="badge gemma">Gemma 4</span>
+      <span class="badge graphify">Graphify</span>
+      <span class="badge cloudways">Cloudways</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="graph-pane">
+      <div id="graph"></div>
+      <div class="graph-hud">
+        <div id="stats" class="stats"></div>
+        <div class="search">
+          <input id="nodeSearch" placeholder="Find a class, function or file…" autocomplete="off" />
+          <ul id="searchResults"></ul>
+        </div>
+      </div>
+      <div class="legend">
+        <span><i class="dot cited"></i>cited in answer</span>
+        <span><i class="dot explored"></i>explored by agent</span>
+        <span><i class="dot sel"></i>selected</span>
+        <button id="resetView" class="ghost small">Reset view</button>
+      </div>
+      <aside id="details" class="details hidden"></aside>
+      <div id="loading" class="loading">Loading knowledge graph…</div>
+    </section>
+
+    <section class="chat-pane">
+      <nav class="modes" role="tablist">
+        <button data-mode="ask" class="active">💬 Ask the codebase</button>
+        <button data-mode="issue">🧭 Plan an issue</button>
+        <button data-mode="screenshot">🖼️ Debug a screenshot</button>
+      </nav>
+      <div id="messages" class="messages"></div>
+      <div id="suggestions" class="suggestions"></div>
+      <form id="composer" class="composer">
+        <div id="imagePreview" class="image-preview hidden"></div>
+        <textarea id="input" rows="3" placeholder="Ask how something works…"></textarea>
+        <div class="composer-row">
+          <label class="attach" title="Attach a screenshot (or paste one)">
+            📎 <input id="file" type="file" accept="image/png,image/jpeg,image/webp" hidden />
+            <span>Image</span>
+          </label>
+          <span id="modelTag" class="model-tag"></span>
+          <button id="send" type="submit">Send ↵</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="vendor/force-graph.min.js"></script>
+  <script src="vendor/marked.umd.js"></script>
+  <script src="vendor/purify.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
