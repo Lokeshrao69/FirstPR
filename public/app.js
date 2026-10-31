@@ -84,6 +84,7 @@ function drawNode(n, ctx, scale) {
 
 async function loadRepo(slug) {
   state.repo = slug; state.history = []; state.cited.clear(); state.explored.clear(); state.selected = null;
+  $('#loading').textContent = 'Loading knowledge graph…';
   $('#loading').classList.remove('hidden'); closeDetails();
   const meta = state.repos.find((r) => r.slug === slug);
   $('#repoLink').href = meta.url;
@@ -289,12 +290,32 @@ function esc(s) { return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&am
   state.repos = repos;
   $('#repo').innerHTML = repos.map((r) => `<option value="${esc(r.slug)}">${esc(r.slug)} (${r.nodes.toLocaleString()} nodes)</option>`).join('');
   $('#modelTag').textContent = `${health.model}${health.key ? '' : ' · ⚠ no API key'}`;
-  const want = new URLSearchParams(location.search).get('repo');
-  const first = repos.find((r) => r.slug === want)?.slug || repos[0].slug;
-  $('#repo').value = first;
   $('#repo').onchange = (e) => loadRepo(e.target.value);
+  $('.brand').style.cursor = 'pointer';
+  $('.brand').title = 'Choose a different repository';
+  $('.brand').onclick = showPicker;
   setMode('ask');
-  await loadRepo(first);
   window.addEventListener('resize', () => Graph.width($('.graph-pane').clientWidth).height($('.graph-pane').clientHeight));
   Graph.width($('.graph-pane').clientWidth).height($('.graph-pane').clientHeight);
+  // Deep links (?repo=x) open directly; otherwise ask the user which repo to analyse first.
+  const want = repos.find((r) => r.slug === new URLSearchParams(location.search).get('repo'))?.slug;
+  if (want) { $('#repo').value = want; await loadRepo(want); }
+  else showPicker();
 })();
+
+function showPicker() {
+  $('#pickerList').innerHTML = state.repos.map((r) => `
+    <button class="picker-item${r.slug === state.repo ? ' current' : ''}" data-slug="${esc(r.slug)}">
+      <span class="picker-name">${esc(r.name || r.slug)}</span>
+      <span class="picker-desc">${esc(r.description || '')}</span>
+      <span class="picker-meta">${r.nodes.toLocaleString()} nodes · ${r.links.toLocaleString()} edges · ${esc(r.url.replace('https://github.com/', ''))}</span>
+    </button>`).join('');
+  $('#pickerList').querySelectorAll('.picker-item').forEach((b) => (b.onclick = () => {
+    $('#picker').classList.add('hidden');
+    $('#repo').value = b.dataset.slug;
+    if (b.dataset.slug !== state.repo) loadRepo(b.dataset.slug);
+  }));
+  if (!state.repo) $('#loading').textContent = 'Choose a repository to begin…';
+  $('#picker').classList.remove('hidden');
+}
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && state.repo) $('#picker').classList.add('hidden'); });
