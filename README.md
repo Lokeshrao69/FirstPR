@@ -1,6 +1,6 @@
 <div align="center">
 
-# ◆ FirstPR
+#  FirstPR
 
 ### Map an open-source AI repo. Ask it anything. Ship your first PR.
 
@@ -19,7 +19,7 @@ A **Gemma 4** agent that reasons over **Graphify** codebase knowledge graphs to 
 
 ---
 
-## 🤔 The problem
+##  The problem
 
 Hacktoberfest 2026 is about **open-source AI**. But opening a repo like `smolagents` for the first time means facing **3,000+ classes and functions**. Newcomers don't know where things live, how the pieces connect, or what their change might break.
 
@@ -27,13 +27,13 @@ Hacktoberfest 2026 is about **open-source AI**. But opening a repo like `smolage
 - `grep` finds text but has **no idea how the code is structured**.
 - Many first-time contributors give up before they open a PR.
 
-## 💡 The solution
+##  The solution
 
 FirstPR turns any repo into a **Graphify knowledge graph** and puts a **Gemma 4 agent** on top of it. The agent explores the graph with **7 function-calling tools**, so each answer points to **real files, functions and line numbers**, and you can watch the cited code light up on the map.
 
 ---
 
-## ✨ Features
+##  Features
 
 ### 1. Pick a repo and see its map
 
@@ -55,7 +55,7 @@ Search for any class or function, or click it on the graph, to see:
 
 Ask in plain English, for example *"How does a forward pass flow through GPT, Block, attention and MLP?"* Gemma 4 calls graph tools such as `search_graph`, `explain_node` and `find_path`, then answers with **clickable node chips** that highlight on the graph. Every answer includes the **agent's trace**, so you can see exactly which tools it called.
 
-### 4. 🧭 Plan an issue
+### 4.  Plan an issue
 
 <img src="docs/images/plan-an-issue.png" alt="Plan an issue mode" width="100%" />
 
@@ -64,7 +64,7 @@ Paste a **good-first-issue** and get back a contribution plan:
 - **What could break:** the blast radius from `impact_of_change`, including dependents and the tests to run
 - **A step-by-step plan** and a **suggested PR title**
 
-### 5. 🖼️ Debug a screenshot
+### 5. Debug a screenshot
 
 <img src="docs/images/debug-screenshot.png" alt="Debug a screenshot mode with an attached traceback" width="100%" />
 
@@ -78,7 +78,7 @@ Paste, drag or upload a screenshot of an error. **Gemma 4's image input** reads 
 
 ---
 
-## 🏗️ How it works
+##  How it works
 
 ```mermaid
 flowchart LR
@@ -108,7 +108,7 @@ These tools are also available over HTTP (`POST /api/tool/:repo/:tool`), and the
 
 ---
 
-## 🏆 Hackathon tracks
+##  Hackathon tracks
 
 | Track | How FirstPR fits |
 |---|---|
@@ -119,7 +119,7 @@ These tools are also available over HTTP (`POST /api/tool/:repo/:tool`), and the
 
 ---
 
-## 🚀 Quick start
+##  Quick start
 
 ```bash
 git clone https://github.com/Lokeshrao69/FirstPR.git
@@ -171,7 +171,7 @@ git add data && git commit -m "Add owner/repo" && git push
 
 ---
 
-## 🧱 Tech stack
+##  Tech stack
 
 **Gemma 4** (Gemini API) · **Graphify** · **Node.js** · **Express** · **force-graph** · **marked** · **DOMPurify** · **Cloudways**
 
