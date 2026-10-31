@@ -158,3 +158,4 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 460px; height: calc(
 .picker-or { display: flex; align-items: center; gap: 10px; margin: 14px 0 12px; color: var(--muted); font-size: 12px; }
 .picker-or::before, .picker-or::after { content: ''; flex: 1; height: 1px; background: var(--line); }
 @keyframes spin { to { transform: rotate(360deg); } }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

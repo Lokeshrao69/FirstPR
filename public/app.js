@@ -103,7 +103,6 @@ async function loadRepo(slug) {
   $('#messages').innerHTML = '';
   welcome(meta);
   renderSuggestions();
-  history.replaceState(null, '', `?repo=${encodeURIComponent(slug)}`);
 }
 
 function focusNodes(ids) {
@@ -297,10 +296,9 @@ function esc(s) { return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&am
   setMode('ask');
   window.addEventListener('resize', () => Graph.width($('.graph-pane').clientWidth).height($('.graph-pane').clientHeight));
   Graph.width($('.graph-pane').clientWidth).height($('.graph-pane').clientHeight);
-  // Deep links (?repo=x) open directly; otherwise ask the user which repo to analyse first.
-  const want = repos.find((r) => r.slug === new URLSearchParams(location.search).get('repo'))?.slug;
-  if (want) { $('#repo').value = want; await loadRepo(want); }
-  else showPicker();
+  // Always start by asking which GitHub repo to analyse.
+  history.replaceState(null, '', location.pathname);
+  showPicker();
 })();
 
 function showPicker() {

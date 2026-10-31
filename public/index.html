@@ -76,17 +76,17 @@
 
   <div id="picker" class="picker hidden" role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
     <div class="picker-card">
-      <h2 id="pickerTitle">Which repository do you want to explore?</h2>
-      <p class="picker-sub">Pick a repo to load its knowledge graph and start asking questions.</p>
+      <h2 id="pickerTitle">Which GitHub repo do you want to check?</h2>
+      <p class="picker-sub">Paste a public repository link. FirstPR maps its code into a knowledge graph and opens it for you.</p>
       <form id="importForm" class="import-form">
-        <label for="importUrl">Analyse any public GitHub repo</label>
+        <label for="importUrl" class="sr-only">GitHub repository URL</label>
         <div class="import-row">
           <input id="importUrl" type="url" placeholder="https://github.com/owner/repo" autocomplete="off" required />
           <button id="importBtn" type="submit">Analyse →</button>
         </div>
         <p id="importStatus" class="import-status" aria-live="polite"></p>
       </form>
-      <div class="picker-or"><span>or pick a ready-made one</span></div>
+      <div class="picker-or"><span>or try a demo repo</span></div>
       <div id="pickerList" class="picker-list"></div>
     </div>
   </div>

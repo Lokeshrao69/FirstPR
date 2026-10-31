@@ -9,7 +9,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { manifest, graphs, importDir } = loadAll(path.join(__dirname, 'data'));
 const app = express();
 app.use(express.json({ limit: '12mb' }));
-app.use(express.static(path.join(__dirname, 'public'), { maxAge: '1h' }));
+// Vendor libraries can be cached; app files must revalidate so UI changes show up on a normal refresh.
+app.use('/vendor', express.static(path.join(__dirname, 'public', 'vendor'), { maxAge: '1h' }));
+app.use(express.static(path.join(__dirname, 'public'), { maxAge: 0, setHeaders: (res) => res.setHeader('Cache-Control', 'no-cache') }));
 
 const clientCache = new Map();
 
