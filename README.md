@@ -1,234 +1,204 @@
+<div align="center">
 
-# nanoGPT
+# ◆ FirstPR
 
-![nanoGPT](assets/nanogpt.jpg)
+### Map an open-source AI repo. Ask it anything. Ship your first PR.
 
+A **Gemma 4** agent that reasons over **Graphify** codebase knowledge graphs to help newcomers make their first open-source contribution, deployed live on **Cloudways**.
+
+![Gemma 4](https://img.shields.io/badge/Gemma%204-open--weight-4285F4?style=for-the-badge)
+![Graphify](https://img.shields.io/badge/Graphify-knowledge%20graph-6DB33F?style=for-the-badge)
+![Cloudways](https://img.shields.io/badge/Cloudways-Node.js-7B61FF?style=for-the-badge)
+![License](https://img.shields.io/badge/license-MIT-F7931E?style=for-the-badge)
+
+*Built at Hacktoberfest Hack Day Hyderabad × AI Community Hyderabad (MLH), 31 Oct 2026*
+
+<img src="docs/images/knowledge-graph.png" alt="FirstPR showing the smolagents knowledge graph" width="100%" />
+
+</div>
 
 ---
 
-**Update Nov 2025** nanoGPT has a new and improved cousin called [nanochat](https://github.com/karpathy/nanochat). It is very likely you meant to use/find nanochat instead. nanoGPT (this repo) is now very old and deprecated but I will leave it up for posterity.
+## 🤔 The problem
+
+Hacktoberfest 2026 is about **open-source AI**. But opening a repo like `smolagents` for the first time means facing **3,000+ classes and functions**. Newcomers don't know where things live, how the pieces connect, or what their change might break.
+
+- Generic AI chatbots **make up** file and function names.
+- `grep` finds text but has **no idea how the code is structured**.
+- Many first-time contributors give up before they open a PR.
+
+## 💡 The solution
+
+FirstPR turns any repo into a **Graphify knowledge graph** and puts a **Gemma 4 agent** on top of it. The agent explores the graph with **7 function-calling tools**, so each answer points to **real files, functions and line numbers**, and you can watch the cited code light up on the map.
 
 ---
 
-The simplest, fastest repository for training/finetuning medium-sized GPTs. It is a rewrite of [minGPT](https://github.com/karpathy/minGPT) that prioritizes teeth over education. Still under active development, but currently the file `train.py` reproduces GPT-2 (124M) on OpenWebText, running on a single 8XA100 40GB node in about 4 days of training. The code itself is plain and readable: `train.py` is a ~300-line boilerplate training loop and `model.py` a ~300-line GPT model definition, which can optionally load the GPT-2 weights from OpenAI. That's it.
+## ✨ Features
 
-![repro124m](assets/gpt2_124M_loss.png)
+### 1. Pick a repo and see its map
 
-Because the code is so simple, it is very easy to hack to your needs, train new models from scratch, or finetune pretrained checkpoints (e.g. biggest one currently available as a starting point would be the GPT-2 1.3B model from OpenAI).
+<img src="docs/images/repo-picker.png" alt="Repository picker" width="100%" />
 
-## install
+Three open-source AI repos come bundled: **nanoGPT**, **minbpe** and **smolagents**. Each one is a Graphify graph of classes, functions, files and docs, connected by calls, imports, inheritance and containment.
 
-```
-pip install torch numpy transformers datasets tiktoken wandb tqdm
-```
+### 2. Explore any node
 
-Dependencies:
+<img src="docs/images/node-explorer.png" alt="Node explorer showing the GPT class, its relationships and source code" width="100%" />
 
-- [pytorch](https://pytorch.org) <3
-- [numpy](https://numpy.org/install/) <3
--  `transformers` for huggingface transformers <3 (to load GPT-2 checkpoints)
--  `datasets` for huggingface datasets <3 (if you want to download + preprocess OpenWebText)
--  `tiktoken` for OpenAI's fast BPE code <3
--  `wandb` for optional logging <3
--  `tqdm` for progress bars <3
+Search for any class or function, or click it on the graph, to see:
+- **What it uses:** methods, calls and imports
+- **What uses it:** callers, importers and subclasses
+- **Its real source code**, with line numbers
+- One-click **"Explain this"** and **"What breaks if I change it?"**
 
-## quick start
+### 3. 💬 Ask the codebase
 
-If you are not a deep learning professional and you just want to feel the magic and get your feet wet, the fastest way to get started is to train a character-level GPT on the works of Shakespeare. First, we download it as a single (1MB) file and turn it from raw text into one large stream of integers:
+Ask in plain English, for example *"How does a forward pass flow through GPT, Block, attention and MLP?"* Gemma 4 calls graph tools such as `search_graph`, `explain_node` and `find_path`, then answers with **clickable node chips** that highlight on the graph. Every answer includes the **agent's trace**, so you can see exactly which tools it called.
 
-```sh
-python data/shakespeare_char/prepare.py
-```
+### 4. 🧭 Plan an issue
 
-This creates a `train.bin` and `val.bin` in that data directory. Now it is time to train your GPT. The size of it very much depends on the computational resources of your system:
+<img src="docs/images/plan-an-issue.png" alt="Plan an issue mode" width="100%" />
 
-**I have a GPU**. Great, we can quickly train a baby GPT with the settings provided in the [config/train_shakespeare_char.py](config/train_shakespeare_char.py) config file:
+Paste a **good-first-issue** and get back a contribution plan:
+- **Where the change goes:** files, functions and line numbers
+- **What could break:** the blast radius from `impact_of_change`, including dependents and the tests to run
+- **A step-by-step plan** and a **suggested PR title**
 
-```sh
-python train.py config/train_shakespeare_char.py
-```
+### 5. 🖼️ Debug a screenshot
 
-If you peek inside it, you'll see that we're training a GPT with a context size of up to 256 characters, 384 feature channels, and it is a 6-layer Transformer with 6 heads in each layer. On one A100 GPU this training run takes about 3 minutes and the best validation loss is 1.4697. Based on the configuration, the model checkpoints are being written into the `--out_dir` directory `out-shakespeare-char`. So once the training finishes we can sample from the best model by pointing the sampling script at this directory:
+<img src="docs/images/debug-screenshot.png" alt="Debug a screenshot mode with an attached traceback" width="100%" />
 
-```sh
-python sample.py --out_dir=out-shakespeare-char
-```
+Paste, drag or upload a screenshot of an error. **Gemma 4's image input** reads the traceback, matches it to nodes in the graph and explains the cause and the fix.
 
-This generates a few samples, for example:
+<details>
+<summary>Sample error screenshot included for the demo</summary>
+<br/>
+<img src="public/samples/nanogpt-error.png" alt="Sample nanoGPT traceback" width="80%" />
+</details>
 
-```
-ANGELO:
-And cowards it be strawn to my bed,
-And thrust the gates of my threats,
-Because he that ale away, and hang'd
-An one with him.
+---
 
-DUKE VINCENTIO:
-I thank your eyes against it.
+## 🏗️ How it works
 
-DUKE VINCENTIO:
-Then will answer him to save the malm:
-And what have you tyrannous shall do this?
-
-DUKE VINCENTIO:
-If you have done evils of all disposition
-To end his power, the day of thrust for a common men
-That I leave, to fight with over-liking
-Hasting in a roseman.
+```mermaid
+flowchart LR
+    A[GitHub repo] -->|graphify update| B[(graph.json<br/>AST: classes, functions,<br/>calls, imports, inherits)]
+    B -->|scripts/prepare.mjs| C[(data/repo<br/>graph + source)]
+    C --> D[Graph engine<br/>lib/graph.js]
+    D <-->|7 tools| E[Gemma 4 agent<br/>lib/agent.js]
+    E <-->|function calling + images| F[Gemini API<br/>or Ollama / vLLM]
+    D --> G[Web UI<br/>force-graph + chat]
+    E --> G
+    G -.deployed on.-> H[Cloudways<br/>Node.js]
 ```
 
-lol  `¯\_(ツ)_/¯`. Not bad for a character-level model after 3 minutes of training on a GPU. Better results are quite likely obtainable by instead finetuning a pretrained GPT-2 model on this dataset (see finetuning section later).
+### Agent tools
 
-**I only have a macbook** (or other cheap computer). No worries, we can still train a GPT but we want to dial things down a notch. I recommend getting the bleeding edge PyTorch nightly ([select it here](https://pytorch.org/get-started/locally/) when installing) as it is currently quite likely to make your code more efficient. But even without it, a simple train run could look as follows:
+| Tool | What it does |
+|---|---|
+| `repo_overview` | Core abstractions (most connected nodes) and communities |
+| `search_graph` | Find classes, functions and files by keyword |
+| `explain_node` | Incoming and outgoing relationships, with `file:line` evidence |
+| `find_path` | Shortest chain of relationships between two nodes |
+| `impact_of_change` | Blast radius: dependents, affected files, likely tests |
+| `nodes_in_file` | Symbols defined in a file |
+| `read_source` | Real source code lines |
 
-```sh
-python train.py config/train_shakespeare_char.py --device=cpu --compile=False --eval_iters=20 --log_interval=1 --block_size=64 --batch_size=12 --n_layer=4 --n_head=4 --n_embd=128 --max_iters=2000 --lr_decay_iters=2000 --dropout=0.0
+These tools are also available over HTTP (`POST /api/tool/:repo/:tool`), and the **agent skill** in [`skills/firstpr/SKILL.md`](skills/firstpr/SKILL.md) lets other coding agents use them.
+
+---
+
+## 🏆 Hackathon tracks
+
+| Track | How FirstPR fits |
+|---|---|
+| **Best Open-Source AI Project** | Built on an open-weight model (Gemma 4) and an open-source graph harness (Graphify). Ships an **agent skill** and runs on **any self-hosted open-weight model** through Ollama, vLLM or llama.cpp. MIT licensed. |
+| **Best Use of Gemma 4** | A focused learning and productivity tool that uses Gemma 4's **multimodal input** (screenshot debugging), **native function calling** (7-tool agent loop) and reasoning. |
+| **Best Use of Graphify** | Our own agent reasons over Graphify knowledge graphs: shortest paths, blast radius, community overviews and grounded citations. New repos are added with one Graphify command. |
+| **Best Use of Cloudways** | Deployed live as a Node.js app on Cloudways by DigitalOcean, straight from GitHub. |
+
+---
+
+## 🚀 Quick start
+
+```bash
+git clone https://github.com/Lokeshrao69/FirstPR.git
+cd FirstPR
+npm install
+cp .env.example .env        # add GEMINI_API_KEY from https://aistudio.google.com/apikey
+npm run start:local         # → http://localhost:3000
 ```
 
-Here, since we are running on CPU instead of GPU we must set both `--device=cpu` and also turn off PyTorch 2.0 compile with `--compile=False`. Then when we evaluate we get a bit more noisy but faster estimate (`--eval_iters=20`, down from 200), our context size is only 64 characters instead of 256, and the batch size only 12 examples per iteration, not 64. We'll also use a much smaller Transformer (4 layers, 4 heads, 128 embedding size), and decrease the number of iterations to 2000 (and correspondingly usually decay the learning rate to around max_iters with `--lr_decay_iters`). Because our network is so small we also ease down on regularization (`--dropout=0.0`). This still runs in about ~3 minutes, but gets us a loss of only 1.88 and therefore also worse samples, but it's still good fun:
+Run the offline tests, which use a mock model server:
 
-```sh
-python sample.py --out_dir=out-shakespeare-char --device=cpu
-```
-Generates samples like this:
-
-```
-GLEORKEN VINGHARD III:
-Whell's the couse, the came light gacks,
-And the for mought you in Aut fries the not high shee
-bot thou the sought bechive in that to doth groan you,
-No relving thee post mose the wear
+```bash
+npm test
 ```
 
-Not bad for ~3 minutes on a CPU, for a hint of the right character gestalt. If you're willing to wait longer, feel free to tune the hyperparameters, increase the size of the network, the context length (`--block_size`), the length of training, etc.
+### Run fully offline on a local open-weight model
 
-Finally, on Apple Silicon Macbooks and with a recent PyTorch version make sure to add `--device=mps` (short for "Metal Performance Shaders"); PyTorch then uses the on-chip GPU that can *significantly* accelerate training (2-3X) and allow you to use larger networks. See [Issue 28](https://github.com/karpathy/nanoGPT/issues/28) for more.
-
-## reproducing GPT-2
-
-A more serious deep learning professional may be more interested in reproducing GPT-2 results. So here we go - we first tokenize the dataset, in this case the [OpenWebText](https://openwebtext2.readthedocs.io/en/latest/), an open reproduction of OpenAI's (private) WebText:
-
-```sh
-python data/openwebtext/prepare.py
+```bash
+ollama pull gemma4
+LLM_PROVIDER=openai OPENAI_BASE_URL=http://localhost:11434/v1 OPENAI_MODEL=gemma4 npm start
 ```
 
-This downloads and tokenizes the [OpenWebText](https://huggingface.co/datasets/openwebtext) dataset. It will create a `train.bin` and `val.bin` which holds the GPT2 BPE token ids in one sequence, stored as raw uint16 bytes. Then we're ready to kick off training. To reproduce GPT-2 (124M) you'll want at least an 8X A100 40GB node and run:
+### Add any GitHub repo
 
-```sh
-torchrun --standalone --nproc_per_node=8 train.py config/train_gpt2.py
+```bash
+pip install graphifyy
+./scripts/add-repo.sh https://github.com/owner/repo "Short description"
+git add data && git commit -m "Add owner/repo" && git push
 ```
 
-This will run for about 4 days using PyTorch Distributed Data Parallel (DDP) and go down to loss of ~2.85. Now, a GPT-2 model just evaluated on OWT gets a val loss of about 3.11, but if you finetune it it will come down to ~2.85 territory (due to an apparent domain gap), making the two models ~match.
+---
 
-If you're in a cluster environment and you are blessed with multiple GPU nodes you can make GPU go brrrr e.g. across 2 nodes like:
+## ☁️ Deploy on Cloudways
 
-```sh
-# Run on the first (master) node with example IP 123.456.123.456:
-torchrun --nproc_per_node=8 --nnodes=2 --node_rank=0 --master_addr=123.456.123.456 --master_port=1234 train.py
-# Run on the worker node:
-torchrun --nproc_per_node=8 --nnodes=2 --node_rank=1 --master_addr=123.456.123.456 --master_port=1234 train.py
-```
+1. In the Cloudways Platform, go to **Node.js**, then **Add Node.js App**.
+2. Connect GitHub and select this repo on the `main` branch.
+3. Choose Node **18 or later**. Install command: `npm install`. Start command: `npm start`.
+4. Add the environment variable `GEMINI_API_KEY`. You can optionally set `GEMMA_MODEL=gemma-4-26b-a4b-it` for faster replies.
+5. Click **Deploy Now**. `/api/health` should return `"key": true`.
 
-It is a good idea to benchmark your interconnect (e.g. iperf3). In particular, if you don't have Infiniband then also prepend `NCCL_IB_DISABLE=1` to the above launches. Your multinode training will work, but most likely _crawl_. By default checkpoints are periodically written to the `--out_dir`. We can sample from the model by simply `python sample.py`.
+| Variable | Default | Purpose |
+|---|---|---|
+| `GEMINI_API_KEY` | — | Gemini API key for Gemma 4 |
+| `GEMMA_MODEL` | `gemma-4-31b-it` | Or `gemma-4-26b-a4b-it` |
+| `GEMINI_RETRIES` | `5` | Retries on transient 429/5xx errors |
+| `LLM_PROVIDER` | `gemini` | Set to `openai` for Ollama, vLLM or llama.cpp |
+| `OPENAI_BASE_URL` / `OPENAI_MODEL` | — | Self-hosted model endpoint |
+| `PORT` | `3000` | Set automatically by the host |
 
-Finally, to train on a single GPU simply run the `python train.py` script. Have a look at all of its args, the script tries to be very readable, hackable and transparent. You'll most likely want to tune a number of those variables depending on your needs.
+---
 
-## baselines
+## 🧱 Tech stack
 
-OpenAI GPT-2 checkpoints allow us to get some baselines in place for openwebtext. We can get the numbers as follows:
+**Gemma 4** (Gemini API) · **Graphify** · **Node.js** · **Express** · **force-graph** · **marked** · **DOMPurify** · **Cloudways**
 
-```sh
-$ python train.py config/eval_gpt2.py
-$ python train.py config/eval_gpt2_medium.py
-$ python train.py config/eval_gpt2_large.py
-$ python train.py config/eval_gpt2_xl.py
-```
+No database and no build step.
 
-and observe the following losses on train and val:
-
-| model | params | train loss | val loss |
-| ------| ------ | ---------- | -------- |
-| gpt2 | 124M         | 3.11  | 3.12     |
-| gpt2-medium | 350M  | 2.85  | 2.84     |
-| gpt2-large | 774M   | 2.66  | 2.67     |
-| gpt2-xl | 1558M     | 2.56  | 2.54     |
-
-However, we have to note that GPT-2 was trained on (closed, never released) WebText, while OpenWebText is just a best-effort open reproduction of this dataset. This means there is a dataset domain gap. Indeed, taking the GPT-2 (124M) checkpoint and finetuning on OWT directly for a while reaches loss down to ~2.85. This then becomes the more appropriate baseline w.r.t. reproduction.
-
-## finetuning
-
-Finetuning is no different than training, we just make sure to initialize from a pretrained model and train with a smaller learning rate. For an example of how to finetune a GPT on new text go to `data/shakespeare` and run `prepare.py` to download the tiny shakespeare dataset and render it into a `train.bin` and `val.bin`, using the OpenAI BPE tokenizer from GPT-2. Unlike OpenWebText this will run in seconds. Finetuning can take very little time, e.g. on a single GPU just a few minutes. Run an example finetuning like:
-
-```sh
-python train.py config/finetune_shakespeare.py
-```
-
-This will load the config parameter overrides in `config/finetune_shakespeare.py` (I didn't tune them much though). Basically, we initialize from a GPT2 checkpoint with `init_from` and train as normal, except shorter and with a small learning rate. If you're running out of memory try decreasing the model size (they are `{'gpt2', 'gpt2-medium', 'gpt2-large', 'gpt2-xl'}`) or possibly decreasing the `block_size` (context length). The best checkpoint (lowest validation loss) will be in the `out_dir` directory, e.g. in `out-shakespeare` by default, per the config file. You can then run the code in `sample.py --out_dir=out-shakespeare`:
+## 📁 Project structure
 
 ```
-THEODORE:
-Thou shalt sell me to the highest bidder: if I die,
-I sell thee to the first; if I go mad,
-I sell thee to the second; if I
-lie, I sell thee to the third; if I slay,
-I sell thee to the fourth: so buy or sell,
-I tell thee again, thou shalt not sell my
-possession.
-
-JULIET:
-And if thou steal, thou shalt not sell thyself.
-
-THEODORE:
-I do not steal; I sell the stolen goods.
-
-THEODORE:
-Thou know'st not what thou sell'st; thou, a woman,
-Thou art ever a victim, a thing of no worth:
-Thou hast no right, no right, but to be sold.
+FirstPR/
+├── server.js            # Express API + static hosting
+├── lib/
+│   ├── graph.js         # Graph engine (search, explain, path, impact, source)
+│   └── agent.js         # Gemma 4 function-calling agent (+ OpenAI-compatible provider)
+├── public/              # UI: graph visualisation + chat
+├── data/                # Graphify graph bundles (nanoGPT, minbpe, smolagents)
+├── scripts/             # add-repo.sh, prepare.mjs
+├── skills/firstpr/      # Agent skill for other coding agents
+├── test/                # Offline smoke tests with mock model servers
+└── docs/                # Images + pitch kit
 ```
 
-Whoa there, GPT, entering some dark place over there. I didn't really tune the hyperparameters in the config too much, feel free to try!
+## 🗺️ Roadmap
 
-## sampling / inference
+- [ ] Import a GitHub issue directly from its URL
+- [ ] Rank a repo's open issues by blast radius ("find me a good first issue")
+- [ ] Add repos live from the UI
 
-Use the script `sample.py` to sample either from pre-trained GPT-2 models released by OpenAI, or from a model you trained yourself. For example, here is a way to sample from the largest available `gpt2-xl` model:
+## 📄 License
 
-```sh
-python sample.py \
-    --init_from=gpt2-xl \
-    --start="What is the answer to life, the universe, and everything?" \
-    --num_samples=5 --max_new_tokens=100
-```
-
-If you'd like to sample from a model you trained, use the `--out_dir` to point the code appropriately. You can also prompt the model with some text from a file, e.g. ```python sample.py --start=FILE:prompt.txt```.
-
-## efficiency notes
-
-For simple model benchmarking and profiling, `bench.py` might be useful. It's identical to what happens in the meat of the training loop of `train.py`, but omits much of the other complexities.
-
-Note that the code by default uses [PyTorch 2.0](https://pytorch.org/get-started/pytorch-2.0/). At the time of writing (Dec 29, 2022) this makes `torch.compile()` available in the nightly release. The improvement from the one line of code is noticeable, e.g. cutting down iteration time from ~250ms / iter to 135ms / iter. Nice work PyTorch team!
-
-## todos
-
-- Investigate and add FSDP instead of DDP
-- Eval zero-shot perplexities on standard evals (e.g. LAMBADA? HELM? etc.)
-- Finetune the finetuning script, I think the hyperparams are not great
-- Schedule for linear batch size increase during training
-- Incorporate other embeddings (rotary, alibi)
-- Separate out the optim buffers from model params in checkpoints I think
-- Additional logging around network health (e.g. gradient clip events, magnitudes)
-- Few more investigations around better init etc.
-
-## troubleshooting
-
-Note that by default this repo uses PyTorch 2.0 (i.e. `torch.compile`). This is fairly new and experimental, and not yet available on all platforms (e.g. Windows). If you're running into related error messages try to disable this by adding `--compile=False` flag. This will slow down the code but at least it will run.
-
-For some context on this repository, GPT, and language modeling it might be helpful to watch my [Zero To Hero series](https://karpathy.ai/zero-to-hero.html). Specifically, the [GPT video](https://www.youtube.com/watch?v=kCc8FmEb1nY) is popular if you have some prior language modeling context.
-
-For more questions/discussions feel free to stop by **#nanoGPT** on Discord:
-
-[![](https://dcbadge.vercel.app/api/server/3zy8kqD9Cp?compact=true&style=flat)](https://discord.gg/3zy8kqD9Cp)
-
-## acknowledgements
-
-All nanoGPT experiments are powered by GPUs on [Lambda labs](https://lambdalabs.com), my favorite Cloud GPU provider. Thank you Lambda labs for sponsoring nanoGPT!
+MIT. See [LICENSE](LICENSE). The bundled sample repos keep their original licenses.
