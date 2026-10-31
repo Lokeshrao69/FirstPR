@@ -78,6 +78,15 @@
     <div class="picker-card">
       <h2 id="pickerTitle">Which repository do you want to explore?</h2>
       <p class="picker-sub">Pick a repo to load its knowledge graph and start asking questions.</p>
+      <form id="importForm" class="import-form">
+        <label for="importUrl">Analyse any public GitHub repo</label>
+        <div class="import-row">
+          <input id="importUrl" type="url" placeholder="https://github.com/owner/repo" autocomplete="off" required />
+          <button id="importBtn" type="submit">Analyse →</button>
+        </div>
+        <p id="importStatus" class="import-status" aria-live="polite"></p>
+      </form>
+      <div class="picker-or"><span>or pick a ready-made one</span></div>
       <div id="pickerList" class="picker-list"></div>
     </div>
   </div>

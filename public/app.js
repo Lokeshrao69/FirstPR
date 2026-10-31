@@ -195,7 +195,7 @@ function renderSuggestions() {
 }
 
 function welcome(meta) {
-  addMsg('model', `<div class="welcome">👋 You're exploring <b>${esc(meta.slug)}</b>: ${esc(meta.description)}.<br/><br/>
+  addMsg('model', `<div class="welcome">👋 You're exploring <b>${esc(meta.slug)}</b>${meta.description ? `: ${esc(meta.description.replace(/\.$/, ''))}.` : '.'}<br/><br/>
   The graph on the left was built by <b>Graphify</b>: every dot is a class, function, file or doc, and every line is a call, import or inheritance link. I'm a <b>Gemma 4</b> agent that walks this graph to answer you, so my answers point to real files and lines.<br/><br/>
   Try a suggestion below, click a node, or switch to <b>Plan an issue</b> to turn a good-first-issue into a PR plan.</div>`, true);
 }
@@ -288,7 +288,7 @@ function esc(s) { return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&am
 (async () => {
   const [repos, health] = await Promise.all([fetch('api/repos').then((r) => r.json()), fetch('api/health').then((r) => r.json())]);
   state.repos = repos;
-  $('#repo').innerHTML = repos.map((r) => `<option value="${esc(r.slug)}">${esc(r.slug)} (${r.nodes.toLocaleString()} nodes)</option>`).join('');
+  renderRepoSelect();
   $('#modelTag').textContent = `${health.model}${health.key ? '' : ' · ⚠ no API key'}`;
   $('#repo').onchange = (e) => loadRepo(e.target.value);
   $('.brand').style.cursor = 'pointer';
@@ -317,5 +317,42 @@ function showPicker() {
   }));
   if (!state.repo) $('#loading').textContent = 'Choose a repository to begin…';
   $('#picker').classList.remove('hidden');
+  if (!$('#importBtn').disabled) $('#importUrl').focus();
 }
+
+function renderRepoSelect() {
+  $('#repo').innerHTML = state.repos.map((r) => `<option value="${esc(r.slug)}">${esc(r.slug)} (${r.nodes.toLocaleString()} nodes)</option>`).join('');
+  if (state.repo) $('#repo').value = state.repo;
+}
+
+$('#importForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const url = $('#importUrl').value.trim();
+  const status = $('#importStatus');
+  const btn = $('#importBtn');
+  btn.disabled = true; $('#importUrl').disabled = true;
+  status.className = 'import-status working';
+  const steps = ['Cloning the repository…', 'Building the knowledge graph with Graphify…', 'Still working, big repos take a minute or two…'];
+  let i = 0; status.textContent = steps[0];
+  const tick = setInterval(() => { i = Math.min(i + 1, steps.length - 1); status.textContent = steps[i]; }, 6000);
+  try {
+    const r = await fetch('api/repos/import', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) });
+    const body = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(body.error || `Import failed (HTTP ${r.status})`);
+    const idx = state.repos.findIndex((x) => x.slug === body.slug);
+    if (idx >= 0) state.repos[idx] = body; else state.repos.push(body);
+    state.repo = null; // force a reload even when re-importing the current repo
+    renderRepoSelect();
+    status.textContent = ''; $('#importUrl').value = '';
+    $('#picker').classList.add('hidden');
+    $('#repo').value = body.slug;
+    await loadRepo(body.slug);
+  } catch (err) {
+    status.className = 'import-status error';
+    status.textContent = err.message;
+  } finally {
+    clearInterval(tick);
+    btn.disabled = false; $('#importUrl').disabled = false;
+  }
+};
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && state.repo) $('#picker').classList.add('hidden'); });
